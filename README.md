@@ -57,7 +57,7 @@
     pip install -r requirements.txt (aiohttp==3.8.6  установить отдельно)
     ```
 
-4. Настроить окружение (файл .env):
+4. Создать и настроить окружение (файл .env):
 
     ```plaintext
     SECRET_KEY_DJANGO=your_django_secret_key
@@ -137,6 +137,7 @@ flower_shop/
 - Используйте PostgreSQL/MySQL
 - Настройте Nginx + Gunicorn
 - Регулярно создавайте бэкапы БД
+
 
 ## Лицензия
 
