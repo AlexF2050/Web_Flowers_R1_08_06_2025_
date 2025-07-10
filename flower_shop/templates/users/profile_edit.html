@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container content-wrapper">
+    <h3>Редактирование профиля</h3>
+
+    <form method="post" id="profile-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-buttons">
+            <button type="submit" class="btn bg-danger">Сохранить</button>
+            <a href="{% url 'users:profile' %}" class="btn bg-info">Назад к профилю</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('profile-form').addEventListener('submit', function() {
+        // Удаляем сообщения из DOM
+        const messageContainer = document.getElementById('message-container');
+        if (messageContainer) {
+            messageContainer.remove();
+        }
+
+        // Дополнительно: очищаем буфер сообщений Django (опционально)
+        {% if messages %}
+            {% for message in messages %}
+
+            {% endfor %}
+        {% endif %}
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="horizontal-stripes-bg">
+
+        <div class="d-flex justify-content-center gap-4">
+            <a href="{% url 'catalog:catalog' %}"
+               class="btn btn-outline-success"
+               style="background-color: #ff0000; color: #fff; border: none; padding: 10px 15px;">
+                Перейти в каталог
+            </a>
+            <button id="show-reviews"
+               class="btn position-relative"
+               style="border: 2px solid #00bfff; color: #00bfff;
+                      background-color: transparent;
+                      transition: all 0.3s ease;
+                      padding-left: 40px; padding-right: 40px; cursor: pointer;">
+                <span class="position-absolute top-50 start-0 translate-middle-y"
+                      style="left: 15px; display: flex; align-items: center; gap: 3px;">
+<!--                    {% if average_rating %}-->
+<!--                        <span style="color: #ffd700;">-->
+<!--                            {% with ''|center:average_rating as range %}-->
+<!--                                {% for _ in range %}★{% endfor %}-->
+<!--                            {% endwith %}-->
+<!--                            {% with ''|ljust:5 as range %}-->
+<!--                                {% for _ in range %}-->
+<!--                                    {% if forloop.counter0 >= average_rating %}☆{% endif %}-->
+<!--                                {% endfor %}-->
+<!--                            {% endwith %}-->
+<!--                        </span>-->
+                    {% else %}
+                        <small style="color: #3d6b2a;">Нет оценок</small>
+                    {% endif %}
+                </span>
+                Отзывы
+                <span class="position-absolute top-50 end-0 translate-middle-y"
+                      style="right: 15px; display: flex; align-items: center; gap: 3px;">
+<!--                    {% if average_rating %}-->
+<!--                        <span style="color: #ffd700;">-->
+<!--                            {% with ''|center:average_rating as range %}-->
+<!--                                {% for _ in range %}★{% endfor %}-->
+<!--                            {% endwith %}-->
+<!--                            {% with ''|ljust:5 as range %}-->
+<!--                                {% for _ in range %}-->
+<!--                                    {% if forloop.counter0 >= average_rating %}☆{% endif %}-->
+<!--                                {% endfor %}-->
+<!--                            {% endwith %}-->
+<!--                        </span>-->
+                    {% else %}
+                        <small style="color: #3d6b2a;">Нет оценок</small>
+                    {% endif %}
+                </span>
+            </button>
+        </div>
+
+        <!-- Контейнер для отзывов (теперь выше новинок) -->
+        <div id="reviews-container" style="display:none; margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.9); border-radius: 10px;">
+            <h3 style="color: #2e5a1c; text-align: center; margin-bottom: 20px;">Отзывы о покупках</h3>
+            <div id="reviews-list" class="container" style="max-width: 800px;"></div>
+        </div>
+
+            <div class="text-center mb-1">
+                <br><br>
+            <h3 style="color: #2e5a1c;">Витрина новинок и хитов продаж</h3>
+        </div>
+        <!-- Секция новинок (теперь ниже отзывов) -->
+        <div class="container mt-5">
+            <div class="row g-4">
+                {% for product in new_products %}
+                    <div class="col-12 col-sm-6 col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm" style="border: 1px solid #00fff; border-radius: 1px;">
+                            <div class="image-wrapper" style="position: relative; padding-top: 100%;">
+                                <img src="{{ product.image.url }}"
+                                     class="card-img-top img-fluid"
+                                     alt="{{ product.name }}"
+                                     style="position: absolute;
+                                            top: 0;
+                                            left: 0;
+                                            width: 100%;
+                                            height: 100%;
+                                            object-fit: contain;
+                                            border-radius: 15px 15px 0 0;">
+                            </div>
+                            <div class="card-body" style="background-color: #f8f9fa;">
+                                <h5 class="card-title" style="color: #2e5a1c;">{{ product.name }}</h5>
+                                <p class="card-text" style="color: #1f3d12;">{{ product.description|truncatechars:100 }}</p>
+                                <div class="mt-2">
+                                    <span class="badge" style="background-color: #3d6b2a; color: white;">Новинка</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <h4 style="color: #3d6b2a;">Новинок пока нет</h4>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('show-reviews').addEventListener('click', function() {
+        const container = document.getElementById('reviews-container');
+
+        if (container.style.display === 'none') {
+            fetch('/reviews/')
+                .then(response => response.json())
+                .then(data => {
+                    const reviewsHtml = data.reviews.map(review => `
+                        <div class="review-card" style="border: 1px solid #ddd;
+                              padding: 15px;
+                              margin-bottom: 15px;
+                              background: white;
+                              border-radius: 8px;
+                              box-shadow: 0 2px 4px rgba(0,0,0,0.1)">
+                            <div class="review-header" style="display: flex;
+                                   justify-content: space-between;
+                                   margin-bottom: 10px;">
+                                <strong style="color: #3d6b2a;">${review.user}</strong>
+                                <span style="color: #666; font-size: 0.9em;">${review.date}</span>
+                            </div>
+                            <div class="product-info" style="color: #888;
+                                  font-size: 0.9em;
+                                  margin-bottom: 8px;">
+                                Товар: ${review.product}
+                            </div>
+                            <div class="rating" style="color: #ffd700;
+                                  font-size: 1.2em;
+                                  margin-bottom: 10px;">
+                                ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
+                            </div>
+                            <div class="review-text" style="color: #444;
+                                  line-height: 1.5;">
+                                ${review.text}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('reviews-list').innerHTML = reviewsHtml;
+                    container.style.display = 'block';
+                });
+        } else {
+            container.style.display = 'none';
+        }
+    });
+    </script>
+{% endblock %}

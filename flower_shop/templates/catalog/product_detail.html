@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ product.image.url }}"
+                 class="img-fluid rounded"
+                 alt="{{ product.name }}">
+        </div>
+        <div class="col-md-6">
+            <h1 class="mb-4" style="color: #1f3d12;">{{ product.name }}</h1>
+            <p class="fs-4" style="color: #2e5a1c;">Цена: {{ product.price }} руб.</p>
+
+            {% if average_rating %}
+            <div class="mb-3">
+                <h5 style="color: #1f3d12;">Рейтинг:</h5>
+                <div class="d-flex align-items-center">
+                    <span class="fs-5" style="color: #ffd700; margin-right: 10px;">
+                        ★ {{ average_rating }}/5
+                    </span>
+                    <a href="{% url 'catalog:product_reviews' product.id %}"
+                       class="btn btn-sm"
+                       style="background-color: white; color: black; border-radius: 5px;">
+                        Отзывы ({{ reviews_count }})
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mb-4">
+                <h5 style="color: #1f3d12;"></h5>
+                {% for color in product.colors.all %}
+                <span class="badge"
+                      style="background-color: {{ color.css_name }}; color: white;">
+                    {{ color.name }}
+                </span>
+                {% endfor %}
+            </div>
+
+            {% if user.is_authenticated and not user_has_review %}
+            <div class="d-flex gap-2">
+                <a href="{% url 'catalog:add_review' product.id %}"
+                   class="btn"
+                   style="background-color: #00bfff; color: white;">
+                    Напишите Ваш отзыв о покупке
+                </a>
+
+            </div>
+<br>
+
+            {% endif %}
+
+            <div class="d-flex gap-4">
+                <a href="{% url 'orders:add_to_cart' product.id %}"
+                   class="btn"
+                   style="background-color: red; color: white;">
+                    Добавить в корзину
+                </a>
+                <a href="{% url 'catalog:catalog' %}"
+                   class="btn"
+                   style="background-color: #00bfff; color: white;">
+                    Назад в каталог
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

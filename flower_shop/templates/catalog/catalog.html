@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h3 class="mb-4 text-center" style="color: #2e5a1c;">Каталог букетов</h3>
+
+    <form method="get" class="mb-4">
+
+<!-- Поисковая строка -->
+    <div class="input-group mb-4">
+        <input type="text"
+           name="q"
+           class="form-control"
+           placeholder="Введите название букета или цветов..."
+           value="{{ request.GET.q }}">
+        <button type="submit"
+            class="btn px-2"
+            style="background-color: #00bfff; color: white;">
+        Искать
+        </button>
+    </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const groupMap = {
+                'Одиночные цветы': ['Розы', 'Хризантемы',],
+                'Букеты': ['Розы', 'Хризантемы']
+            };
+
+            const typeMap = {
+                'Розы': ['Красные розы', 'Белые розы'],
+                'Хризантемы': [
+                    'Голандские Хризантемы',
+                    'Фермерские Хризантемы',
+                    'Ассорти Хризантем',
+                ]
+            };
+
+            function updateFilters() {
+                const group = document.getElementById('id_group').value;
+                const subgroupSelect = document.getElementById('id_subgroup');
+
+                subgroupSelect.querySelectorAll('option').forEach(opt => {
+                    opt.hidden = group && !groupMap[group].includes(opt.value);
+                });
+
+                const subgroup = subgroupSelect.value;
+                const typeSelect = document.getElementById('id_flower_type');
+
+                typeSelect.querySelectorAll('option').forEach(opt => {
+                    opt.hidden = subgroup && !typeMap[subgroup]?.includes(opt.value);
+                });
+            }
+
+            document.getElementById('id_group').addEventListener('change', updateFilters);
+            document.getElementById('id_subgroup').addEventListener('change', updateFilters);
+            updateFilters();
+        });
+        </script>
+
+        <!-- Основной контейнер фильтров -->
+        <div class="row g-3">
+            <!-- Фильтр по категориям -->
+            <div class="col-md-4">
+                <div class="p-4">
+                    <h5 style="color: #1f3d12; margin-left: -1.0em;">Категории</h5>
+
+                    <div class="mb-3 ps-0">
+                        <label class="form-label">Группа:</label>
+                        {{ filter.form.group }}
+                    </div>
+
+                    <div class="mb-3 ps-0">
+                        <label class="form-label">Подгруппа:</label>
+                        {{ filter.form.subgroup }}
+                    </div>
+
+                    <div class="mb-3 ps-0">
+                        <label class="form-label">Тип цветка:</label>
+                        {{ filter.form.flower_type }}
+                    </div>
+                </div>
+            </div>
+
+            {% if request.GET.q %}
+                <div class="alert alert-info mt-1" style="background-color: #00bfff; border-color: #00bfff; color: #fff;">
+                    Результаты поиска для: "<strong>{{ request.GET.q }}</strong>"
+                    <a href="{% url 'catalog:catalog' %}" class="float-end" style="color: #ffff;">Сбросить поиск</a>
+                </div>
+            {% endif %}
+
+            <!-- Фильтр по цветам -->
+            <div class="col-md-4">
+                <h5 style="color: #1f3d12;">Цвета:</h5>
+                <div class="ps-3">
+                    {% for color in filter.form.colors %}
+                        <div class="form-check">
+                            {{ color.tag }}
+                            <label class="form-check-label" style="color: #2e5a1c;" for="{{ color.id_for_label }}">
+                                {{ color.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Сортировка и фильтры -->
+            <div class="col-md-4">
+                <div class="filter-card bg-light p-4 rounded-3 shadow-sm">
+                    <!-- Сортировка -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold" style="color: #1f3d12;">Сортировка:</label>
+                        <select class="form-select"
+                                name="ordering"
+                                aria-label="Сортировка по цене"
+                                style="border-color: #3d6b2a;">
+                            <option value="">По умолчанию</option>
+                            <option value="price" {% if request.GET.ordering == 'price' %}selected{% endif %}>
+                                Цена по возрастанию
+                            </option>
+                            <option value="-price" {% if request.GET.ordering == '-price' %}selected{% endif %}>
+                                Цена по убыванию
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Фильтры -->
+                    <div class="border-top pt-4">
+                        <label class="form-label fw-bold" style="color: #1f3d12;">Фильтры:</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="is_new"
+                                   name="is_new"
+                                   {% if request.GET.is_new %}checked{% endif %}
+                                   style="background-color: #00bfff; border-color: #00bfff;">
+                            <label class="form-check-label" style="color: #2e5a1c;" for="is_new">
+                                Только новинки
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="is_bestseller"
+                                   name="is_bestseller"
+                                   {% if request.GET.is_bestseller %}checked{% endif %}
+                                   style="background-color: #00bfff; border-color: #00bfff;">
+                            <label class="form-check-label" style="color: #2e5a1c;" for="is_bestseller">
+                                Только хиты
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="in_stock"
+                                   name="in_stock"
+                                   {% if request.GET.in_stock %}checked{% endif %}
+                                   style="background-color: #00bfff; border-color: #00bfff;">
+                            <label class="form-check-label" style="color: #2e5a1c;" for="in_stock">
+                                В наличии
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки управления -->
+<button type="submit"
+            class="btn text-white"
+        style="background-color: #00bfff; border: 2px; width: 5cm;">
+    Применить фильтры
+</button>
+
+            {% if has_filters %}
+                <a href="{% url 'catalog:catalog' %}" class="btn text-black"
+        style="background-color: #fff; border: 2px solid #00bfff; width: 5cm;">Сбросить фильтры</a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Список продуктов -->
+    <div class="row mt-5">
+        {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="{{ product.image.url }}"
+                         class="card-img-top"
+                         alt="{{ product.name }}"
+                         style="height: 400px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color: #1f3d12;">
+                            {{ product.name }}
+                        </h5>
+                        <p class="card-text" style="color: #2e5a1c;">
+                            Цена: {{ product.price }} руб.<br>
+                            {% for color in product.colors.all %}
+                                <span class="badge"
+                                      style="background-color: {{ color.css_name }}; color: white;">
+
+                                </span>
+                            {% endfor %}
+                        </p>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'orders:add_to_cart' product.id %}"
+                               class="btn"
+                               style="background-color: red; color: white; flex: 1;">
+                                В корзину
+                            </a>
+                            <a href="{% url 'catalog:product_detail' product.id %}"
+                               class="btn"
+                               style="background-color: #00bfff; color: white; flex: 1;">
+                                Подробнее
+                            </a>
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'catalog:add_to_favorites' product.id %}"
+                                      method="post"
+                                      class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit"
+                                            class="favorite-btn {% if product in request.user.favorites.all %}active{% endif %}"
+                                            title="{% if product in request.user.favorites.all %}Удалить из избранного{% else %}Добавить в избранное{% endif %}"
+                                            style="border: 1px solid transparent !important;
+                                                   background: transparent !important;
+                                                   padding: 0;">
+                                        <i class="bi bi-heart{% if product in request.user.favorites.all %}-fill{% endif %}"
+                                           style="border: 1px solid transparent !important;"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center" style="color: #2e5a1c;">Товары не найдены.</p>
+        {% endfor %}
+    </div>
+
+    <script>
+    document.querySelectorAll('.favorite-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.preventDefault();
+            const form = this.closest('form');
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                });
+                if (response.ok) {
+                    const isActive = this.classList.contains('active');
+                    const icon = this.querySelector('i');
+                    this.classList.toggle('active');
+                    icon.classList.toggle('bi-heart');
+                    icon.classList.toggle('bi-heart-fill');
+                    this.title = isActive ? 'Добавить в избранное' : 'Удалить из избранного';
+                    icon.style.animation = 'heartBeat 600ms ease-in-out';
+                    setTimeout(() => {
+                        icon.style.animation = '';
+                    }, 600);
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        });
+    });
+    </script>
+{% endblock %}

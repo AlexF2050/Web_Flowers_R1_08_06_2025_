@@ -1,0 +1,32 @@
+{% extends "admin/change_list.html" %}
+
+{% block content_title %}
+    <h1>Статистика заказов</h1>
+{% endblock %}
+
+{% block result_list %}
+    <div class="stats-section">
+        <h2>Сегодня ({{ cl.result_list.0.order_date|date:"d.m.Y" }})</h2>
+        <p>Заказов: {{ stats.today.total_orders }} / Сумма: {{ stats.today.total_amount }} ₽</p>
+    </div>
+
+    <div class="stats-section">
+        <h2>Неделя №{{ stats.week.number }}</h2>
+        <p>Текущая: {{ stats.week.stats.total_orders }} / {{ stats.week.stats.total_amount }} ₽</p>
+        <p>Прошлый год: {{ stats.week.last_year.total_orders }} / {{ stats.week.last_year.total_amount }} ₽</p>
+    </div>
+
+    <div class="stats-section">
+        <h2>{{ stats.month.name }}</h2>
+        <p>Текущий: {{ stats.month.stats.total_orders }} / {{ stats.month.stats.total_amount }} ₽</p>
+        <p>Прошлый год: {{ stats.month.last_year.total_orders }} / {{ stats.month.last_year.total_amount }} ₽</p>
+    </div>
+
+    <div class="stats-section">
+        <h2>{{ stats.year.current }}</h2>
+        <p>Заказов: {{ stats.year.stats.total_orders }} / {{ stats.year.stats.total_amount }} ₽</p>
+        <p>Прошлый год: {{ stats.year.last_year.total_orders }} / {{ stats.year.last_year.total_amount }} ₽</p>
+    </div>
+
+    {{ block.super }}
+{% endblock %}

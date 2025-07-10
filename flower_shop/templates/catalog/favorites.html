@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if not user.is_authenticated %}
+        <p class="text-center" style="color: #2e5a1c;">Для работы с данным событием необходимо выбрать пункт меню: "РЕГИСТРАЦИЯ"</p>
+
+    {% else %}
+        <h3 class="mb-4" style="color: #2e5a1c;">Избранное</h3>
+        <div class="row">
+            {% for favorite in favorites %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="{{ favorite.product.image.url }}"
+                             class="card-img-top"
+                             alt="{{ favorite.product.name }}"
+                             style="height: 450px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title" style="color: #1f3d12;">
+                                {{ favorite.product.name }}
+                            </h5>
+                            <p class="card-text" style="color: #2e5a1c;">
+                                Цена: {{ favorite.product.price }} руб.
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'catalog:remove_from_favorites' favorite.id %}"
+                                   class="btn bg-info"
+                                   style="flex: 1;">
+                                    Удалить из избранного
+                                </a>
+                                <a href="{% url 'catalog:product_detail' favorite.product.id %}"
+                                   class="btn bg-danger"
+                                   style="flex: 1;">
+                                    Подробнее о данных цветах
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center" style="color: #2e5a1c;">В избранном пока ничего нет.</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

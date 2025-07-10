@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="review-form">
+    <h2>Добавить отзыв для {{ product.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn bg-info">Отправить отзыв</button>
+    </form>
+</div>
+{% endblock %}

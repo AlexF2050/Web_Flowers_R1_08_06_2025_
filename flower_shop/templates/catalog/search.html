@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container content-wrapper">
+    <h2 class="mb-4" style="color: #1f3d12;">Результаты поиска</h2>
+    
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" 
+                   name="q" 
+                   class="form-control" 
+                   placeholder="Поиск букетов..." 
+                   value="{{ search_query }}">
+            <button type="submit" 
+                    class="btn" 
+                    style="background-color: #2e5a1c; color: white;">
+                Найти
+            </button>
+        </div>
+    </form>
+
+    {% if products %}
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <!-- Карточка товара (аналогично catalog.html) -->
+                    {% include 'catalog/product_card.html' %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" style="background-color: #d4f3d4; border-color: #b0d8b0;">
+            По запросу "{{ search_query }}" ничего не найдено
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

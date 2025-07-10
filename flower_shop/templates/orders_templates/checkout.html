@@ -1,0 +1,86 @@
+<!-- checkout.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1>Оформление заказа</h1>
+
+    <!-- Блок товаров -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Ваш заказ</h5>
+            <ul class="list-group">
+                {% for item in cart.cartitem_set.all %}
+                <li class="list-group-item">
+                    {{ item.product.name }} × {{ item.quantity }}
+                    <span class="float-right">{{ item.product.price|floatformat:2 }} ₽</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <hr>
+            <h5 class="text-right">Итого: {{ total|floatformat:2 }} ₽</h5>
+        </div>
+    </div>
+
+    <!-- Форма заказа -->
+    <form method="post" id="checkoutForm">
+        {% csrf_token %}
+
+        <!-- Дата доставки -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Дата доставки</h5>
+                <div class="form-group">
+                    {{ date_form.delivery_date.label_tag }}
+                    {{ date_form.delivery_date }}
+                    {% if date_form.delivery_date.errors %}
+                    <div class="alert alert-danger mt-2">
+                        {{ date_form.delivery_date.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Адрес доставки -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Адрес доставки</h5>
+
+                <div class="radio-group">
+                    {{ address_form.use_profile_address }}
+                </div>
+
+                <div id="customAddressFields" style="display: block">
+                    <div class="form-group mt-3">
+                        {{ address_form.address }}
+                        {% if address_form.address.errors %}
+                            <div class="alert alert-danger mt-2">
+                                {{ address_form.address.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки -->
+        <a href="{% url 'orders:cart' %}" class="btn bg-info btn-block">Вернуться назад</a>
+
+
+        <button type="submit" class="btn bg-danger btn-block">Подтвердить заказ</button>
+
+    </form>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('input[name="use_profile_address"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('id_address').closest('.form-field').style.display =
+            this.value === 'False' ? 'block' : 'none';
+    });
+});
+</script>
+{% endblock %}

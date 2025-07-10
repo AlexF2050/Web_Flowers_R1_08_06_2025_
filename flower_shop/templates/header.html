@@ -1,0 +1,236 @@
+<header class="bg-light-green py-3" style="background: #f6c7f5 !important; border-bottom: 1px solid #b0d8b0;">
+    <div class="container">
+
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+                <!-- Выпадающий список городов -->
+                <div class="dropdown">
+                    <a class="text-decoration-none nav-link dropdown-toggle" href="#" role="button"
+                       id="cityDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span id="selectedCity">Город доставки</span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cityDropdown"
+                        style="border: 1px solid #b0d8b0; background-color: #00bff;">
+                        <li><a class="dropdown-item city-option" href="#" style="color: #00bff ;">Новосибирск</a></li>
+                    </ul>
+                </div>
+
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+
+                <a href="tel:+73517555300" class="text-decoration-none nav-link">+7 (383) 310-12-25</a>
+                <a href="#" class="text-decoration-none nav-link call-btn" onclick="event.preventDefault(); openForm()">Заказать звонок</a>
+            </div>
+
+            <div id="callback-form" class="form-overlay">
+            <div class="form-container">
+                <form onsubmit="sendPhone(event)">
+                 <input type="hidden" id="userChatId" name="chat_id">
+                    <input type="tel"
+                         id="phoneInput"
+                        class="phone-input"
+                        placeholder="+7 (900) 123-45-67"
+                        required>
+
+                        <div class="form-footer">
+                            <button type="submit" class="btn bg-danger">Заказать</button>
+                            <button type="button" class="btn bg-info" onclick="closeForm()">Закрыть</button>
+                        </div>
+                </form>
+            </div>
+            </div>
+
+            </div>
+
+        <!-- Заголовок и подзаголовок -->
+        <div class="text-center mb-2">
+           <p class="lead" style="color: #E74C3C; font-size: 2rem; font-weight: bold;">
+              Цветы, которые говорят о любви!
+           </p>
+
+<!--<header class="bg-light-green py-3" style="background: #f6c7f5 !important; border-bottom: 1px solid #b0d8b0;">-->
+
+<!--&lt;!&ndash;        <div class="container d-flex justify-content-between align-items-center">&ndash;&gt;-->
+<!--&lt;!&ndash;        &lt;!&ndash; Логотип &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        <a href="/" class="logo-link">&ndash;&gt;-->
+<!--&lt;!&ndash;            <img src="static/images/logo.png" alt="Логотип магазина цветов" class="logo" style="max-width: 150px; height: auto;">&ndash;&gt;-->
+<!--&lt;!&ndash;        </a>&ndash;&gt;-->
+
+<!--    &lt;!&ndash; Заголовок и подзаголовок &ndash;&gt;-->
+<!--    <div class="text-center mb-2">-->
+<!--        <p class="lead" style="color: #cc0000; font-size: 2rem; font-weight: bold;">-->
+<!--            Цветы, которые говорят о любви!-->
+<!--        </p>-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--</header>-->
+
+        <!-- Навигация -->
+        <nav class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <!-- Левая группа -->
+<!--            <div class="d-flex gap-3 align-items-center flex-wrap">-->
+<!--                &lt;!&ndash; Выпадающий список городов &ndash;&gt;-->
+<!--                <div class="dropdown">-->
+<!--                    <a c    lass="text-decoration-none nav-link dropdown-toggle" href="#" role="button"-->
+<!--                       id="cityDropdown" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                        <span id="selectedCity">Город доставки</span>-->
+<!--                    </a>-->
+<!--                    <ul class="dropdown-menu" aria-labelledby="cityDropdown"-->
+<!--                        style="border: 1px solid #b0d8b0; background-color: #e6f4e6;">-->
+<!--                        <li><a class="dropdown-item city-option" href="#" style="color: #2e5a1c;">Новосибирск</a></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+
+<!--                <a href="tel:+73517555300" class="text-decoration-none nav-link">+7 (351) 7-555-300</a>-->
+<!--                <a href="#" class="text-decoration-none nav-link call-btn" onclick="event.preventDefault(); openForm()">Заказать звонок</a>-->
+<!--            </div>-->
+
+            <!-- Правая группа -->
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+                <!-- ... остальная часть навигации без изменений ... -->
+                <!-- Функциональные кнопки -->
+                <a href="{% url 'home' %}" class="text-decoration-none nav-link">
+                    <i class="bi bi-grid"></i>
+                    Витрина
+                </a>
+
+                <a href="{% url 'orders:my_orders' %}" class="nav-link">
+                    <i class="bi bi-clipboard-check"></i>
+                    <span class="d-none d-md-inline">Мой заказ</span>
+                </a>
+                <!-- Корзина -->
+                <a href="{% url 'orders:cart' %}" class="nav-link position-relative">
+                    <i class="bi bi-cart3"></i>
+                    <span class="d-none d-md-inline">Корзина</span>
+                    {% if cart_items_count > 0 %}
+                    <span class="badge bg-success translate-middle" style="font-size: 0.6em;">
+                        {{ cart_items_count }}
+                    </span>
+                    {% endif %}
+
+
+
+                <a href="{% url 'catalog:favorites' %}" class="nav-link position-relative">
+                    <i class="bi bi-heart"></i>
+                    <span class="d-none d-md-inline">Избранное</span>
+                    {% if request.user.is_authenticated and request.user.favorite_set.exists %}
+                    <span class="badge bg-success translate-middle" style="font-size: 0.6em;">
+                        {{ request.user.favorite_set.count }}
+                    </span>
+                    {% endif %}
+                </a>
+
+
+
+                <!-- Разделитель -->
+
+
+                <!-- Авторизация -->
+                {% if user.is_authenticated %}
+                <a href="{% url 'users:profile' %}" class="nav-link">
+                    <i class="bi bi-person-circle"></i>
+                    <span class="d-none d-md-inline">Профиль</span>
+
+                </a>
+                {% else %}
+                <a href="{% url 'users:login' %}" class="nav-link">Войти</a>
+                <a href="{% url 'users:register' %}"
+                class="nav-link"
+                style="color: #E74C3C; border: 1px solid #E74C3C;">
+                Регистрация</a>
+                {% endif %}
+
+                </a>
+
+
+            </div>
+        </nav>
+    </div>
+
+
+
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем сохраненный город при загрузке страницы
+    const savedCity = localStorage.getItem('selectedCity');
+    const cityElement = document.getElementById('selectedCity');
+
+    if (savedCity) {
+        cityElement.textContent = savedCity;
+    }
+
+    // Обработчик выбора города
+    document.querySelectorAll('.city-option').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selected = this.textContent;
+            cityElement.textContent = selected;
+            localStorage.setItem('selectedCity', selected);
+        });
+    });
+});
+</script>
+
+<script>
+async function sendPhone(e) {
+    e.preventDefault();
+    const phone = document.getElementById('phoneInput').value;
+    const city = localStorage.getItem('selectedCity') || 'Не указан';
+
+    if (!/^\+7\s?[\(]?9\d{2}[\)]?\s?\d{3}[-]?\d{2}[-]?\d{2}$/.test(phone)) {
+        alert('Пожалуйста, введите корректный номер телефона');
+        return;
+    }
+
+    try {
+        const response = await fetch('/send-callback/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: `phone=${encodeURIComponent(phone)}&city=${encodeURIComponent(city)}`
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.message || 'Ошибка сервера');
+
+        alert('✅ Заявка отправлена! Мы вам перезвоним.');
+        closeForm();
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert(`⚠️ ${error.message}`);
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<script>
+function openForm() {
+    document.getElementById('callback-form').style.display = 'block';
+    window.location.hash = '#callback-form'; // Для поддержки истории
+}
+
+// Обновите обработчик закрытия
+function closeForm() {
+    document.getElementById('callback-form').style.display = 'none';
+    history.replaceState(null, null, ' '); // Очистка истории
+}
+</script>
+
+
